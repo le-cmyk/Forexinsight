@@ -38,7 +38,7 @@ def CreatePairorder ( listorders) -> List[Pairorder]:
     l_paire_order=Find_probable_closures(listorders)
     res=[]
     for pair in l_paire_order:
-        element=Pairorder(pair[0].price,pair[1].price,0,pair[1].timestamp-pair[0].timestamp,pair[0].sendVolume)
+        element=Pairorder(pair[0].price,pair[1].price,pair[1].timestamp-pair[0].timestamp,pair[0].executedVolume)
         res.append(element)
     return res
 

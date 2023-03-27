@@ -1,33 +1,39 @@
-import plotly.graph_objects as go
-import streamlit as st
+import plotly.graph_objs as go
 
-@st.cache_data
-def Create_return_evolution_graph(orders):
-    # Initialize the plot figure
-    fig = go.Figure()
-    fig.update_layout(title="Return Evolution Graph")
+def Afficher_investissements(pairorders):
+    investissements = []
+    for pairorder in pairorders:
+        investissement = (pairorder.Prix_fin - pairorder.Prix_debut) * pairorder.Volume
+        investissements.append(investissement)
 
-    # Create two scatter traces for buy and sell orders
-    buy_trace = go.Scatter(x=[], y=[], mode='markers', marker=dict(symbol='circle', size=5, color='blue'), name="Buy")
-    sell_trace = go.Scatter(x=[], y=[], mode='markers', marker=dict(symbol='square', size=5, color='red'), name="Sell")
+    trace = go.Bar(
+        x=list(range(len(pairorders))),
+        y=investissements,
+        marker=dict(
+            color='rgba(50, 171, 96, 0.6)',
+            line=dict(
+                color='rgba(50, 171, 96, 1.0)',
+                width=2
+            )
+        ),
+        opacity=0.6
+    )
 
-    # Iterate through the orders and add the corresponding data points to the appropriate trace
-    for order in orders:
-        x = order.Duration
-        y = order.Position * (order.Prix_fin - order.Prix_debut) / order.Prix_debut
+    layout = go.Layout(
+        title='Investissements pour chaque Pairorder',
+        xaxis=dict(
+            title='Number of Order',
+            tickmode='linear',
+            tick0=0,
+            dtick=1
+        ),
+        yaxis=dict(
+            title='Return'
+        ),
+        bargap=0.2,
+        bargroupgap=0.1
+    )
 
-        if order.Position > 0:
-            buy_trace['x'].append(x)
-            buy_trace['y'].append(y)
-        else:
-            sell_trace['x'].append(x)
-            sell_trace['y'].append(y)
-
-    # Add the traces to the figure
-    fig.add_trace(buy_trace)
-    fig.add_trace(sell_trace)
-
-    # Show legend
-    fig.update_layout(showlegend=True, legend=dict(x=1, y=0, bgcolor='rgba(255, 255, 255, 0.5)'))
-
+    fig = go.Figure(data=[trace], layout=layout)
     return fig
+

@@ -22,7 +22,7 @@ def Read_exchange_rates_csv(filename: str) -> List[CurrencyExchangeRate]:
     return exchangeRates
 
 
-def get_exchange_rates_by_date(desired_date , df: pd.DataFrame,plushour=1 ) -> List[CurrencyExchangeRate]:
+def list_get_exchange_rates_by_date(desired_date , df: pd.DataFrame,plushour=1 ) -> List[CurrencyExchangeRate]:
 
     # Création d'une liste pour stocker les données extraites du DataFrame
     exchange_rates = []
@@ -40,6 +40,21 @@ def get_exchange_rates_by_date(desired_date , df: pd.DataFrame,plushour=1 ) -> L
             exchange_rates.append(CurrencyExchangeRate(date, bid, ask))
 
     return exchange_rates
+
+
+
+def get_exchange_rates_by_date(desired_date, df: pd.DataFrame, plus=1) -> pd.DataFrame:
+    start_time = desired_date-pd.Timedelta(seconds=plus*2)
+    end_time = desired_date + pd.Timedelta(hours=plus)
+    df= df.query('Timestamp >= @start_time and Timestamp < @end_time')
+
+    df = df.set_index('Timestamp')
+    df = df.resample('1S').ffill()
+    df = df.reset_index()
+    df['time_diff'] = pd.to_datetime(df["Timestamp"]).diff().dt.total_seconds().fillna(0)
+    return df
+
+
 
 
 #Find the file for a specific order
@@ -73,9 +88,9 @@ def generate_exanche_rate(order,hour=1)-> List[CurrencyExchangeRate]:
     df["Timestamp"] = pd.to_datetime(df["Timestamp"], format="%Y-%m-%d %H:%M:%S.%fZ")
 
 
-    res=get_exchange_rates_by_date(order.timestamp,df)
-
+    res=get_exchange_rates_by_date(order.timestamp,df,1)
     return res
+
 
 
 

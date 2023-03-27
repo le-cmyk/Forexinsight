@@ -11,7 +11,8 @@ import io
 from Functions.importations.import_orders import reading_orders
 from Functions.Calculs.toxicity import show_Toxicity
 from Functions.importations.find_probable_closures import CreatePairorder
-from Functions.importations.read_exchange_rates_csv import generate_exanche_rate
+from Functions.Plots.plot_ask_with_horizontal_line import Plot_ask_with_horizontal_line
+from Functions.Plots.create_return_evolution_graph import Afficher_investissements
 
 
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/ 
@@ -78,7 +79,7 @@ with tab1:
     list_Pairorder=CreatePairorder(list_orders)
     st.write(f"Number of possible pair in the orders : {len(list_Pairorder)}")
 
-    st.write(generate_exanche_rate(list_orders[0]))
+
 
 
 #endregion
@@ -86,6 +87,10 @@ with tab1:
 #region Chart
 
 with tab2:
+    st.write(Plot_ask_with_horizontal_line(list_orders[-2]))
+
+    st.write(Afficher_investissements(list_Pairorder))
+
     show_Toxicity(list_orders)
 
 #endregion
