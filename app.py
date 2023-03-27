@@ -10,6 +10,8 @@ import io
 #import functions
 from Functions.importations.import_orders import reading_orders
 from Functions.Calculs.toxicity import show_Toxicity
+from Functions.importations.find_probable_closures import CreatePairorder
+from Functions.importations.read_exchange_rates_csv import generate_exanche_rate
 
 
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/ 
@@ -72,6 +74,11 @@ with tab1:
     list_orders=reading_orders(df_orders)
 
     st.write(f"Number of orders loads : {len(list_orders)}")
+
+    list_Pairorder=CreatePairorder(list_orders)
+    st.write(f"Number of possible pair in the orders : {len(list_Pairorder)}")
+
+    st.write(generate_exanche_rate(list_orders[0]))
 
 
 #endregion

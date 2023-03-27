@@ -1,7 +1,7 @@
 
 # Interactive Visulalisation of orders – Streamlit
 
-Tentative of converting a C# projetc in a python one
+Tentative of converting a C# project in a python one
 
 ## Requirement
 
@@ -9,8 +9,6 @@ Tentative of converting a C# projetc in a python one
 # streamlit
 pip install streamlit
 
-# owlready2
-pip install owlready2
 ```
 
 ## Run the app
