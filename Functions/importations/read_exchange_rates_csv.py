@@ -22,36 +22,18 @@ def Read_exchange_rates_csv(filename: str) -> List[CurrencyExchangeRate]:
     return exchangeRates
 
 
-def list_get_exchange_rates_by_date(desired_date , df: pd.DataFrame,plushour=1 ) -> List[CurrencyExchangeRate]:
-
-    # Création d'une liste pour stocker les données extraites du DataFrame
-    exchange_rates = []
-
-    # Parcours de toutes les données du DataFrame
-    for index, row in df.iterrows():
-        # Extraction des données de la ligne actuelle
-        date = row['Timestamp']
-        bid = row['Bid']
-        ask = row['Ask']
-
-        # Vérification si la date correspond à celle souhaitée
-        if date >= desired_date and date <= desired_date.replace(hour=desired_date.hour + plushour):
-            # Ajout des données extraites à la liste
-            exchange_rates.append(CurrencyExchangeRate(date, bid, ask))
-
-    return exchange_rates
-
-
-
-def get_exchange_rates_by_date(desired_date, df: pd.DataFrame, plus=1) -> pd.DataFrame:
+def get_exchange_rates_by_date( df: pd.DataFrame,desired_date,end_date=None, plus=1) -> pd.DataFrame:
     start_time = desired_date-pd.Timedelta(seconds=plus*2)
-    end_time = desired_date + pd.Timedelta(hours=plus)
+    
+    if end_date is not None:
+        end_time = end_date + pd.Timedelta(hours=plus)
+    else:
+        end_time = desired_date + pd.Timedelta(hours=plus)
     df= df.query('Timestamp >= @start_time and Timestamp < @end_time')
 
     df = df.set_index('Timestamp')
     df = df.resample('1S').ffill()
     df = df.reset_index()
-    df['time_diff'] = pd.to_datetime(df["Timestamp"]).diff().dt.total_seconds().fillna(0)
     return df
 
 
@@ -80,17 +62,16 @@ def find_data(order)-> str:
         raise ValueError(f"No data file found for order {order}")
 
 
-def generate_exanche_rate(order,hour=1)-> List[CurrencyExchangeRate]:
 
-    file_path=find_data(order)
+def generate_exanche_rates(orders,hour=1)-> List[CurrencyExchangeRate]:
+
+    file_path=find_data(orders[0])
     df=pd.read_csv(file_path)
     # Convertir la colonne Timestamp en datetime
     df["Timestamp"] = pd.to_datetime(df["Timestamp"], format="%Y-%m-%d %H:%M:%S.%fZ")
 
-
-    res=get_exchange_rates_by_date(order.timestamp,df,1)
+    res=get_exchange_rates_by_date(df,orders[0].timestamp,orders[-1].timestamp,1)
     return res
-
 
 
 

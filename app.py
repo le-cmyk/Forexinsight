@@ -14,6 +14,7 @@ from Functions.Filtres.filtrage import filter_orders
 from Functions.importations.find_probable_closures import CreatePairorder
 from Functions.Plots.plot_ask_with_horizontal_line import Plot_ask_with_horizontal_line
 from Functions.Plots.create_return_evolution_graph import Afficher_investissements
+from Functions.Calculs.summary import info_list_order
 
 
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/ 
@@ -78,8 +79,7 @@ with tab1:
     # Sidebar
     st.sidebar.header('Filters')
     symbol = st.sidebar.selectbox('Symbole', [None] + list(df_orders['Symbol'].unique()), format_func=lambda x: 'All' if x == None else x)
-    start_date = st.sidebar.date_input('Start date',value=df_orders['Timestamp'].dt.date.min())
-    date = st.sidebar.selectbox('Date',list(df_orders['Timestamp'].dt.date.unique())+[None], format_func=lambda x: 'All' if x == None else x)
+    date = st.sidebar.selectbox('Date',list(df_orders['Timestamp'].dt.date.unique()), format_func=lambda x: 'All' if x == None else x)#add +[None] if you want to select more than a day
     start_hour = st.sidebar.number_input('Start hour', min_value=0, max_value=23,value=df_orders['Timestamp'].dt.hour.min())
     end_hour = st.sidebar.number_input('End hour', min_value=0, max_value=23,value=df_orders['Timestamp'].dt.hour.max())
     is_buy = st.sidebar.selectbox('Type', [None]+list(df_orders['BuySELL'].unique()), format_func=lambda x: 'All' if x == None else x)
@@ -100,28 +100,32 @@ with tab1:
     list_Pairorder=CreatePairorder(list_orders)
     st.write(f"Number of possible pair in the orders : {len(list_Pairorder)}")
 
-
-
-
 #endregion
 
 #region Chart
 
 with tab2:
 
+    
 
+    col1, col2 ,col3= st.columns([1,2,3])
 
+    info=info_list_order(list_orders)
 
-    st.write(Plot_ask_with_horizontal_line(list_orders[-2]))
+    col1.write(info["start"])
+
+    col2.write(f'A the end with {info["position"]} (Volume)')
+
+    col3.write(f'A the end with {info["benefice"]}$ (Benefice)')
+
+    st.write(Plot_ask_with_horizontal_line(list_orders))
 
     st.write(Afficher_investissements(list_Pairorder))
 
-    show_Toxicity(list_orders)
 
 #endregion
 
-#---- Plot different return
-
+#
 
 
 # ---- HIDE STREAMLIT STYLE ----
