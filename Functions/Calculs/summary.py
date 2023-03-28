@@ -4,9 +4,9 @@ def info_list_order(orders):
     benef=0
     simulated_benef=0
     if orders[0].isBuy:
-        res["start"]="Positif"
+        res["start"]="Start with a buy"
     else : 
-        res["start"]=f'Negatif of {orders[0].executedVolume} (volume)'
+        res["start"]=f'Start with a negatif of {orders[0].executedVolume} (volume)'
         volume=orders[0].executedVolume
         simulated_benef=orders[0].executedVolume*orders[0].price
 
