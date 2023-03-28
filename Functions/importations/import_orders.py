@@ -9,12 +9,7 @@ def reading_orders(df):
     for _, row in df.iterrows():
         source = row['Source']
         symbol = row['Symbol']
-        timestamp_str = row['Timestamp']
-        try:
-            timestamp = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S.%fZ')
-        except ValueError:
-            print(f"Invalid timestamp format: {timestamp_str}")
-            continue
+        timestamp = row['Timestamp']
         bid = row['Bid']
         ask = row['Ask']
         is_buy = row['BuySELL'].upper() == 'BUY'
